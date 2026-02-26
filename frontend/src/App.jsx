@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { createProduct, deleteProduct, getProducts, updateProduct } from "./api/productsApi";
+import "./App.css";
 
 /**
  * Практика 4 (заготовка).
@@ -79,7 +80,7 @@ export default function App() {
   async function onPricePlus(id, currentPrice) {
     setError("");
     try {
-      await updateProduct(id, { price: Number(currentPrice) + 10 });
+      await updateProduct(id, { price: Number(currentPrice) + 100 });
       await load();
     } catch (e) {
       setError(String(e?.message || e));
@@ -87,35 +88,41 @@ export default function App() {
   }
 
   return (
-    <div style={{ maxWidth: 900, margin: "0 auto", padding: 24, fontFamily: "system-ui" }}>
-      <h1>Онлайн магазин</h1>
-      <section style={{ marginTop: 24, padding: 16, border: "1px solid #ddd", borderRadius: 12 }}>
-        <h2 style={{ marginTop: 0 }}>Добавить товар</h2>
-        <form onSubmit={onAdd} style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+    <div className="app-page">
+      <section className="app-hero">
+        <h1 className="app-title">Онлайн магазин</h1>
+        <p className="app-subtitle">
+          Управляйте товарами: добавляйте, обновляйте цену и удаляйте позиции.
+        </p>
+      </section>
+
+      <section className="app-panel">
+        <h2 className="section-title">Добавить товар</h2>
+        <form onSubmit={onAdd} className="product-form">
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Название"
-            style={{ padding: 10, minWidth: 220 }}
+            className="app-input input-title"
           />
           <input
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             placeholder="Категория"
-            style={{ padding: 10, minWidth: 160 }}
+            className="app-input input-category"
           />
           <input
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Описание"
-            style={{ padding: 10, minWidth: 260 }}
+            className="app-input input-description"
           />
           <input
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             placeholder="Цена"
             type="number"
-            style={{ padding: 10, width: 140 }}
+            className="app-input input-number"
           />
           <input
             value={stock}
@@ -124,75 +131,72 @@ export default function App() {
             type="number"
             min="0"
             step="1"
-            style={{ padding: 10, width: 140 }}
+            className="app-input input-number"
           />
           <input
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
             placeholder="URL картинки"
-            style={{ padding: 10, minWidth: 260 }}
+            className="app-input input-image-url"
           />
-          <button disabled={!canSubmit} style={{ padding: "10px 14px" }}>
+          <button disabled={!canSubmit} className="btn btn-primary">
             Добавить
           </button>
-          <button type="button" onClick={load} style={{ padding: "10px 14px" }}>
+          <button type="button" onClick={load} className="btn btn-ghost">
             Обновить список
           </button>
         </form>
       </section>
 
-      <section style={{ marginTop: 24 }}>
+      <section className="products-section">
         <h2>Список товаров</h2>
 
         {loading && <p>Загрузка...</p>}
         {error && (
-          <p style={{ color: "crimson" }}>
+          <p className="error-text">
             Ошибка: {error}
             <br />
             Проверьте, что: (1) backend запущен на 3006, (2) CORS настроен, (3) functions в productsApi.js реализованы.
           </p>
         )}
 
-        <ul style={{ paddingLeft: 18 }}>
+        <ul className="products-list">
           {items.map((p) => (
-            <li
-              key={p.id}
-              style={{ marginBottom: 12, border: "1px solid #e5e5e5", borderRadius: 10, padding: 10 }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 8 }}>
+            <li key={p.id} className="product-card">
+              <div className="product-header">
                 {p.imageUrl ? (
                   <img
                     src={p.imageUrl}
                     alt={p.title}
-                    style={{ width: 48, height: 48, objectFit: "cover", borderRadius: 8 }}
+                    className="product-image"
                   />
                 ) : null}
                 <span>
-                  <b>{p.title}</b>
+                  <b className="product-title">{p.title}</b>
                 </span>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "160px 1fr", rowGap: 4, columnGap: 10 }}>
-                <span style={{ color: "#666" }}>Категория:</span>
+              <div className="product-grid">
+                <span className="field-label">Категория:</span>
                 <span>{p.category || "Без категории"}</span>
 
-                <span style={{ color: "#666" }}>Описание:</span>
+                <span className="field-label">Описание:</span>
                 <span>{p.description || "—"}</span>
 
-                <span style={{ color: "#666" }}>Цена:</span>
+                <span className="field-label">Цена:</span>
                 <span>{p.price} ₽</span>
 
-                <span style={{ color: "#666" }}>Остаток:</span>
+                <span className="field-label">Остаток:</span>
                 <span>{p.stock}</span>
 
-                <span style={{ color: "#666" }}>Рейтинг:</span>
+                <span className="field-label">Рейтинг:</span>
                 <span>{p.rating ?? "—"}</span>
               </div>
 
-              <button onClick={() => onPricePlus(p.id, p.price)} style={{ marginTop: 10 }}>
-                +10 ₽
+              <button onClick={() => onPricePlus(p.id, p.price)} className="btn btn-primary product-action-main">
+                +100 ₽
               </button>
-              <button onClick={() => onDelete(p.id)} style={{ marginLeft: 8 }}>
+              <button onClick={() => onDelete(p.id)} className="btn btn-ghost product-action-secondary">
                 Удалить
               </button>
             </li>
