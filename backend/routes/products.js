@@ -1,9 +1,13 @@
 const express = require("express");
-const { nanoid } = require("nanoid");
+const { randomBytes } = require("crypto");
 
 const router = express.Router();
 
 let products = require("../data/products");
+
+function createId() {
+  return randomBytes(4).toString("hex");
+}
 
 /**
  * Вспомогательная функция: найти товар по id (id строковый)
@@ -40,7 +44,7 @@ router.post("/", (req, res) => {
   }
 
   const newProduct = {
-    id: nanoid(8),
+    id: createId(),
     title: title.trim(),
     category: typeof category === "string" ? category.trim() : "Без категории",
     description: typeof description === "string" ? description.trim() : "",
