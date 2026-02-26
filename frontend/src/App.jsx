@@ -21,7 +21,7 @@ export default function App() {
     setError("");
     setLoading(true);
     try {
-      const data = await getProducts(); // TODO: заработает после реализации productsApi.js
+      const data = await getProducts();
       setItems(data);
     } catch (e) {
       setError(String(e?.message || e));
@@ -75,13 +75,7 @@ export default function App() {
 
   return (
     <div style={{ maxWidth: 900, margin: "0 auto", padding: 24, fontFamily: "system-ui" }}>
-      <h1>Практика 4 — React + Express API</h1>
-
-      <p style={{ color: "#555" }}>
-        Если видите ошибку <code>TODO: реализуйте ...</code>, значит вы ещё не реализовали функции в{" "}
-        <code>src/api/productsApi.js</code>.
-      </p>
-
+      <h1>Онлайн магазин</h1>
       <section style={{ marginTop: 24, padding: 16, border: "1px solid #ddd", borderRadius: 12 }}>
         <h2 style={{ marginTop: 0 }}>Добавить товар</h2>
         <form onSubmit={onAdd} style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>

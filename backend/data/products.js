@@ -6,32 +6,32 @@
 module.exports = [
   {
     id: "p1",
-    title: "Печенье",
-    category: "Сладости",
-    description: "Хрустящее печенье к чаю.",
-    price: 79,
+    title: "Процессор Intel i7",
+    category: "CPU",
+    description: "Процессор",
+    price: 17900,
     stock: 20,
     rating: 4.6,
     imageUrl: ""
   },
   {
     id: "p2",
-    title: "Молоко",
-    category: "Напитки",
-    description: "Ультрапастеризованное 2.5%.",
-    price: 99,
+    title: "HDD WD Blue",
+    category: "HDD",
+    description: "Жесткий диск",
+    price: 9900,
     stock: 15,
     rating: 4.3,
     imageUrl: ""
   },
   {
     id: "p3",
-    title: "Хлеб",
-    category: "Выпечка",
-    description: "Свежий, мягкий, 400 г.",
-    price: 59,
+    title: "Видеокарта RTX 5080",
+    category: "GPU",
+    description: "Видеокарта",
+    price: 59900,
     stock: 30,
-    rating: 4.1,
+    rating: 4.5,
     imageUrl: ""
   }
 ];
