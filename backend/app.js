@@ -1,11 +1,30 @@
 const express = require("express");
 const cors = require("cors");
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 
 const logger = require("./middleware/logger");
 const productsRouter = require("./routes/products");
 
 const app = express();
 const PORT = process.env.PORT || 3006;
+
+const swaggerSpec = swaggerJsdoc({
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Products API",
+      version: "1.0.0",
+      description: "CRUD API для управления товарами",
+    },
+    servers: [
+      {
+        url: `http://localhost:${PORT}`,
+      },
+    ],
+  },
+  apis: ["./routes/*.js"],
+});
 
 /**
  * Конвейер обработки запроса (pipeline) в Express:
@@ -32,6 +51,9 @@ app.use(logger);
 app.get("/", (req, res) => {
   res.send("Express API is running. Try /api/products");
 });
+
+// Swagger UI: интерактивная документация API
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // 4) Роуты API (все пути /api/products/... обрабатывает productsRouter)
 app.use("/api/products", productsRouter);

@@ -5,6 +5,79 @@ const router = express.Router();
 
 let products = require("../data/products");
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Product:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           example: p1
+ *         title:
+ *           type: string
+ *           example: Видеокарта RTX 5080
+ *         category:
+ *           type: string
+ *           example: GPU
+ *         description:
+ *           type: string
+ *           example: Мощная видеокарта для игр
+ *         price:
+ *           type: number
+ *           example: 59900
+ *         stock:
+ *           type: integer
+ *           example: 30
+ *         rating:
+ *           type: number
+ *           example: 4.5
+ *         imageUrl:
+ *           type: string
+ *           example: https://example.com/image.jpg
+ *     ProductCreateInput:
+ *       type: object
+ *       required:
+ *         - title
+ *         - price
+ *         - stock
+ *       properties:
+ *         title:
+ *           type: string
+ *           example: SSD Samsung 980 1TB
+ *         category:
+ *           type: string
+ *           example: SSD
+ *         description:
+ *           type: string
+ *           example: Быстрый NVMe SSD
+ *         price:
+ *           type: number
+ *           example: 8500
+ *         stock:
+ *           type: integer
+ *           example: 25
+ *         imageUrl:
+ *           type: string
+ *           example: https://example.com/ssd.jpg
+ *     ProductPatchInput:
+ *       type: object
+ *       properties:
+ *         title:
+ *           type: string
+ *         category:
+ *           type: string
+ *         description:
+ *           type: string
+ *         price:
+ *           type: number
+ *         stock:
+ *           type: integer
+ *         imageUrl:
+ *           type: string
+ */
+
 function createId() {
   return randomBytes(4).toString("hex");
 }
@@ -91,11 +164,49 @@ function validateProductInput(input, mode = "create") {
   return { ok: true, data };
 }
 
+/**
+ * @swagger
+ * /api/products:
+ *   get:
+ *     summary: Получить список товаров
+ *     tags: [Products]
+ *     responses:
+ *       200:
+ *         description: Список товаров
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Product'
+ */
 // GET /api/products — список товаров
 router.get("/", (req, res) => {
   res.json(products);
 });
 
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   get:
+ *     summary: Получить товар по id
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Товар найден
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: Товар не найден
+ */
 // GET /api/products/:id — один товар
 router.get("/:id", (req, res) => {
   const product = findById(req.params.id);
@@ -103,6 +214,28 @@ router.get("/:id", (req, res) => {
   res.json(product);
 });
 
+/**
+ * @swagger
+ * /api/products:
+ *   post:
+ *     summary: Создать новый товар
+ *     tags: [Products]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ProductCreateInput'
+ *     responses:
+ *       201:
+ *         description: Товар создан
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Ошибка валидации
+ */
 // POST /api/products — добавить товар (201 / 400)
 router.post("/", (req, res) => {
   const result = validateProductInput(req.body, "create");
@@ -121,6 +254,36 @@ router.post("/", (req, res) => {
   return res.status(201).json(newProduct);
 });
 
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   patch:
+ *     summary: Частично обновить товар
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ProductPatchInput'
+ *     responses:
+ *       200:
+ *         description: Товар обновлён
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Невалидные данные или пустое тело запроса
+ *       404:
+ *         description: Товар не найден
+ */
 // PATCH /api/products/:id — частичное обновление (200 / 400 / 404)
 router.patch("/:id", (req, res) => {
   const product = findById(req.params.id);
@@ -140,6 +303,32 @@ router.patch("/:id", (req, res) => {
   return res.json(product);
 });
 
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   delete:
+ *     summary: Удалить товар
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Товар удалён
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                   example: true
+ *       404:
+ *         description: Товар не найден
+ */
 // DELETE /api/products/:id — удалить товар (200 / 404)
 router.delete("/:id", (req, res) => {
   const id = req.params.id;
